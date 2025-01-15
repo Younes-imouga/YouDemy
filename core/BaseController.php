@@ -12,10 +12,15 @@ class BaseController
         extract($data);
         include __DIR__ . '/../views/admin/' . $view . '.php';
     }
-    public function renderUser($view, $data = [])
+    public function renderStudent($view, $data = [])
     {
         extract($data);
-        include __DIR__ . '/../views/client/' . $view . '.php';
+        include __DIR__ . '/../views/client/student/' . $view . '.php';
+    }   
+    public function renderTeacher($view, $data = [])
+    {
+        extract($data);
+        include __DIR__ . '/../views/client/teacher/' . $view . '.php';
     }   
     public function logout() {
         session_start();
