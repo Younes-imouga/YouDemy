@@ -1,3 +1,5 @@
+<?php include '../views/components/header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,19 +9,6 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
-
-  <!-- Navbar -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="#" class="text-2xl font-bold text-teal-600">Youdemy</a>
-      <nav class="space-x-4">
-        <a href="/" class="text-gray-700 hover:text-teal-600">Home</a>
-        <a href="/courses" class="text-gray-700 hover:text-teal-600">Courses</a>
-        <a href="/profile" class="text-teal-600">Profile</a>
-        <a href="/login" class="text-gray-700 hover:text-teal-600">Login</a>
-      </nav>
-    </div>
-  </header>
 
   <!-- Profile Content -->
   <section class="flex-grow container mx-auto mt-8">

@@ -1,3 +1,5 @@
+<?php include '../views/components/header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,18 +10,6 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Navbar -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="/" class="text-2xl font-bold text-teal-600">Youdemy</a>
-      <nav class="space-x-4">
-        <a href="/dashboard" class="text-gray-700 hover:text-teal-600">Dashboard</a>
-        <a href="/my-courses" class="text-gray-700 hover:text-teal-600">My Courses</a>
-        <a href="/add-course" class="text-gray-700 hover:text-teal-600">Add Course</a>
-        <a href="/logout" class="text-gray-700 hover:text-teal-600">Logout</a>
-      </nav>
-    </div>
-  </header>
 
   <!-- Dashboard Content -->
   <main class="flex-grow container mx-auto py-8">
