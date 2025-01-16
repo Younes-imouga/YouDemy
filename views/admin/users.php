@@ -1,66 +1,56 @@
+<?php include '../views/components/header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Youdemy Platform - User Management</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Youdemy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <main class="flex-grow container mx-auto py-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">User Management</h1>
+        
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Username</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php foreach ($data['users'] as $user): ?>
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    <?php echo htmlspecialchars($user['username']); ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php echo htmlspecialchars($user['email']); ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php echo htmlspecialchars($user['role']); ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <?php echo htmlspecialchars($user['status']); ?>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <button class="text-teal-600 hover:text-teal-900 mr-3">Edit</button>
+                                    <button class="text-red-600 hover:text-red-900">Delete</button>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 
-  <!-- Navbar -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="#" class="text-2xl font-bold text-teal-600">Youdemy</a>
-      <nav class="space-x-4">
-        <a href="/" class="text-gray-700 hover:text-teal-600">Home</a>
-        <a href="/dashboard" class="text-gray-700 hover:text-teal-600">Dashboard</a>
-        <a href="/logout" class="text-gray-700 hover:text-teal-600">Logout</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Content -->
-  <main class="flex-grow container mx-auto mt-8">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">User Management</h1>
-
-    <!-- User Table -->
-    <div class="bg-white shadow rounded-lg p-4">
-      <table class="min-w-full border-collapse border border-gray-300">
-        <thead>
-          <tr class="bg-gray-100 text-gray-800">
-            <th class="px-6 py-3 border border-gray-300 text-left text-sm font-medium">User Name</th>
-            <th class="px-6 py-3 border border-gray-300 text-left text-sm font-medium">Role</th>
-            <th class="px-6 py-3 border border-gray-300 text-left text-sm font-medium">Status</th>
-            <th class="px-6 py-3 border border-gray-300 text-left text-sm font-medium">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr class="hover:bg-gray-50">
-            <td class="px-6 py-4 border border-gray-300 text-sm">John Doe</td>
-            <td class="px-6 py-4 border border-gray-300 text-sm">Student</td>
-            <td class="px-6 py-4 border border-gray-300 text-sm">Active</td>
-            <td class="px-6 py-4 border border-gray-300 text-sm space-x-4">
-              <button class="text-teal-600 hover:underline">Edit</button>
-              <button class="text-red-600 hover:underline">Delete</button>
-            </td>
-          </tr>
-          <!-- Repeat for other users -->
-        </tbody>
-      </table>
-    </div>
-  </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white">
-    <div class="container mx-auto text-center p-4">
-      <p class="text-sm">© 2025 Youdemy - All Rights Reserved</p>
-      <nav class="space-x-4 mt-2">
-        <a href="/privacy" class="text-gray-400 hover:text-white">Privacy Policy</a>
-        <a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a>
-      </nav>
-    </div>
-  </footer>
-
+    <?php include '../views/components/footer.php'; ?>
 </body>
 </html>
