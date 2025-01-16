@@ -12,8 +12,8 @@
 
   <!-- 404 Content -->
   <section class="flex-grow container mx-auto text-center mt-12">
-    <h1 class="text-6xl font-extrabold text-gray-900 mb-4">404</h1>
-    <p class="text-xl text-gray-600 mb-8">Oops! The page you are looking for doesn't exist.</p>
+    <h1 class="text-6xl font-extrabold text-gray-900 mb-4">403</h1>
+    <p class="text-xl text-gray-600 mb-8">You Dont Have Permision To Access To This Page.</p>
     <a href="/" class="text-teal-600 text-lg hover:text-teal-700">Go back to Home</a>
   </section>
 
