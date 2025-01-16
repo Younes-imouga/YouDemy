@@ -9,17 +9,8 @@
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
   <!-- Navbar -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="#" class="text-2xl font-bold text-teal-600">Youdemy</a>
-      <nav class="space-x-4">
-        <a href="/" class="text-gray-700 hover:text-teal-600">Home</a>
-        <a href="/courses" class="text-gray-700 hover:text-teal-600">Courses</a>
-        <a href="/login" class="text-gray-700 hover:text-teal-600">Login</a>
-        <a href="/register" class="text-teal-600">Sign Up</a>
-      </nav>
-    </div>
-  </header>
+  <?php include '../views/components/header.php'; ?>
+
 
   <!-- Course Details Section -->
   <main class="flex-grow container mx-auto mt-8">
@@ -64,17 +55,8 @@
       </div>
     </div>
   </main>
+  <?php include '../views/components/footer.php'; ?>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white mt-12">
-    <div class="container mx-auto text-center p-4">
-      <p class="text-sm">© 2025 Youdemy - All Rights Reserved</p>
-      <nav class="space-x-4 mt-2">
-        <a href="/privacy" class="text-gray-400 hover:text-white">Privacy Policy</a>
-        <a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a>
-      </nav>
-    </div>
-  </footer>
 
 </body>
 </html>
