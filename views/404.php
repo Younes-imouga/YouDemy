@@ -1,4 +1,3 @@
-<?php include '../views/components/header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,8 +8,8 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
-
-  <!-- 404 Content -->
+  
+  <?php include '../views/components/header.php'; ?>
   <section class="flex-grow container mx-auto text-center mt-12">
     <h1 class="text-6xl font-extrabold text-gray-900 mb-4">404</h1>
     <p class="text-xl text-gray-600 mb-8">Oops! The page you are looking for doesn't exist.</p>

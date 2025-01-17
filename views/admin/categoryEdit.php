@@ -1,3 +1,4 @@
+<?php include '../views/components/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,29 +26,23 @@
     <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Edit Category</h1>
 
     <!-- Form for Editing Category -->
-    <form class="bg-white shadow rounded-lg p-8 w-1/2 mx-auto">
+    <form action="/admin/edit-category" method="POST" class="bg-white shadow rounded-lg p-8 w-1/2 mx-auto">
+      <input type="hidden" name="id" value="<?php echo $data['category']['id']; ?>">
       <div class="mb-6">
         <label for="category-name" class="block text-sm font-medium text-gray-700">Category Name</label>
-        <input type="text" id="category-name" class="w-full mt-2 p-3 border border-gray-300 rounded" placeholder="Enter Category Name" value="Programming">
+        <input type="text" id="category-name" name="name" class="w-full mt-2 p-3 border border-gray-300 rounded" 
+               value="<?php echo htmlspecialchars($data['category']['name']); ?>" required>
       </div>
       <div class="mb-6">
         <label for="category-description" class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea id="category-description" class="w-full mt-2 p-3 border border-gray-300 rounded" rows="4" placeholder="Enter Description">Courses related to programming languages.</textarea>
+        <textarea id="category-description" name="description" class="w-full mt-2 p-3 border border-gray-300 rounded" 
+                  rows="4"><?php echo htmlspecialchars($data['category']['description']); ?></textarea>
       </div>
       <button type="submit" class="w-full bg-teal-600 text-white py-2 rounded hover:bg-teal-700">Save Changes</button>
     </form>
   </main>
+  <?php include '../views/components/footer.php'; ?>
 
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white">
-    <div class="container mx-auto text-center p-4">
-      <p class="text-sm">© 2025 Youdemy - All Rights Reserved</p>
-      <nav class="space-x-4 mt-2">
-        <a href="/privacy" class="text-gray-400 hover:text-white">Privacy Policy</a>
-        <a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a>
-      </nav>
-    </div>
-  </footer>
 
 </body>
 </html>

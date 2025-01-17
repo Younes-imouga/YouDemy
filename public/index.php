@@ -3,6 +3,7 @@ session_start();
 include '../controllers/AdminController.php';
 include '../controllers/StudentController.php';
 include '../controllers/TeacherController.php';
+include '../controllers/CourseController.php';
 include '../controllers/AuthController.php';
 include '../core/Router.php';
 include '../core/Route.php';
@@ -17,50 +18,78 @@ if (!isset($_SESSION['Logged_in'])) {
         Route::get("/", [AdminController::class, 'showDashboard']);
     }else{
         if (isset($_SESSION['is_teacher'])) {
-            Route::get("/", [TeacherController::class, 'showHome']);
+            Route::get("/", [TeacherController::class, 'showDashboard']);
         } else {
-            Route::get("/", [StudentController::class, 'showHome']);
+            Route::get("/", [StudentController::class, 'showDashboard']);
         }
     }
 }
 
-Route::get("/login", [AuthController::class, 'showLogin']);
-Route::post("/login", [AuthController::class, 'Login']);
 
-Route::get("/logout", [AuthController::class, 'logout']);
 
-Route::get("/register", [AuthController::class, 'showRegister']);
-Route::post("/register", [AuthController::class, 'Register']);
+        // public
+        Route::get("/login", [AuthController::class, 'showLogin']);
+        Route::post("/login", [AuthController::class, 'Login']);
+        
+        Route::get("/logout", [AuthController::class, 'logout']);
+        
+        Route::get("/register", [AuthController::class, 'showRegister']);
+        Route::post("/register", [AuthController::class, 'Register']);
+        
+        
+        Route::get("/tag", [AuthController::class, 'showtags']);
+        Route::post("/tag", [AuthController::class, 'showtags']);
 
-Route::get("/admin/dashboard", [AdminController::class, 'showDashboard']);
-Route::get("/teacher/dashboard", [TeacherController::class, 'showDashboard']);
-Route::get("/student/dashboard", [StudentController::class, 'showDashboard']);
+        Route::get('/course/([0-9]+)', ['CourseController', 'showCourseDetail']);
 
-Route::get("/tag", [AuthController::class, 'showtags']);
-Route::post("/tag", [AuthController::class, 'showtags']);
+        // Admin
+        Route::get("/admin/dashboard", [AdminController::class, 'showDashboard']);
+        Route::post("/admin/users", [AdminController::class, 'approveTeacher']);
 
-Route::get("/my-courses", [StudentController::class, 'showMyCourses']);
-Route::get("/courses", [StudentController::class, 'showCourses']);
-Route::get("/profile", [StudentController::class, 'showProfile']);
-Route::get("/profile/edit", [StudentController::class, 'showEditProfile']);
-Route::get("/add-course", [TeacherController::class, 'showAddCourse']);
-Route::get("/stats", [TeacherController::class, 'showStats']);
-Route::get("/teacher/approval", [TeacherController::class, 'showApproval']);
-Route::get("/privacy", [AuthController::class, 'showPrivacy']);
-Route::get("/terms", [AuthController::class, 'showTerms']);
-Route::get("/support", [AuthController::class, 'showSupport']);
+        Route::post("/admin/approve-teacher", [AdminController::class, 'approveTeacher']);
+        Route::post("/admin/reject-teacher", [AdminController::class, 'rejectTeacher']);
 
-Route::post("/admin/users", [AdminController::class, 'approveTeacher']);
+        Route::get("/admin/teacher-approvals", [AdminController::class, 'showTeacherApprovals']);
 
-Route::post("/admin/approve-teacher", [AdminController::class, 'approveTeacher']);
-Route::post("/admin/reject-teacher", [AdminController::class, 'rejectTeacher']);
+        Route::get("/admin/manage-users", [AdminController::class, 'showUsers']);
+        Route::get("/admin/manage-courses", [AdminController::class, 'showCourses']);
 
-Route::get("/admin/teacher-approvals", [AdminController::class, 'showTeacherApprovals']);
+        Route::get("/admin/categories", [AdminController::class, 'showCategories']);
+        Route::post("/admin/add-category", [AdminController::class, 'addCategory']);
+        Route::post("/admin/edit-category", [AdminController::class, 'editCategory']);
+        Route::get("/admin/edit-category/{id}", [AdminController::class, 'showEditCategory']);
+        Route::post("/admin/delete-category", [AdminController::class, 'deleteCategory']);
 
-Route::get("/admin/manage-users", [AdminController::class, 'showUsers']);
-Route::get("/admin/manage-courses", [AdminController::class, 'showCourses']);
+        Route::get("/admin/tags", [AdminController::class, 'showTags']);
+        Route::post("/admin/add-tag", [AdminController::class, 'addTag']);
+        Route::post("/admin/delete-tag", [AdminController::class, 'deleteTag']);
+
+
+        // Teacher
+
+        Route::get("/teacher/dashboard", [TeacherController::class, 'showDashboard']);
+
+        Route::get("/my-courses", [TeacherController::class, 'showMyCourses']);
+        Route::get("/stats", [TeacherController::class, 'showStats']);
+        Route::get("/teacher/approval", [TeacherController::class, 'showApproval']);
+        
+        Route::get("/add-course", [TeacherController::class, 'showAddCourse']);
+
+        Route::get('/teacher/add-course', [TeacherController::class, 'showAddCourse']);
+        Route::post('/teacher/add-course', [TeacherController::class, 'addCourse']);
+
+
+        // Student
+        Route::get("/student/dashboard", [StudentController::class, 'showDashboard']);
+
+        Route::get("/courses", [StudentController::class, 'showCourses']);
+        Route::get("/student/my-courses", [StudentController::class, 'showMyCourses']);
+        Route::get("/profile", [StudentController::class, 'showProfile']);
+        Route::get("/profile/edit", [StudentController::class, 'showEditProfile']);
+
+        Route::post("/enroll-course", [CourseController::class, 'enrollCourse']);
+
+
 
 Route::get("/403", [BaseController::class, 'render403']);
-
-// Route::get("path", [controller::class, 'method']);
 $router->dispatch($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);

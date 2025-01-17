@@ -9,18 +9,14 @@ class StudentController extends BaseController {
     }
 
     public function showCourses() {
-        // Public page - no verification needed
-        $this->renderStudent('courses');
+        $course = new Course();
+        $courses = $course->getAllCourses();
+        $this->renderStudent('courses', ['courses' => $courses]);
     }
 
     public function showDashboard() {
         $this->ensureStudent();
         $this->renderStudent('index');
-    }
-
-    public function showMyCourses() {
-        $this->ensureStudent();
-        $this->renderStudent('myCourses');
     }
 
     public function showProfile() {
@@ -31,5 +27,10 @@ class StudentController extends BaseController {
     public function showEditProfile() {
         $this->ensureStudent();
         $this->renderStudent('editProfile');
+    }
+
+    public function showMyCourses() {
+        $this->ensureStudent();
+        $this->renderStudent('myCourses');
     }
 }

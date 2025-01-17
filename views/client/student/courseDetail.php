@@ -1,62 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Youdemy Platform - Course Details</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo htmlspecialchars($data['course']['title']); ?> - Youdemy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
+<?php require_once '../views/components/header.php'; ?>
+<body class="flex flex-col min-h-screen bg-gray-50">
+    <main class="flex-grow container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Course Header -->
+            <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+                <div class="relative">
+                    <img src="https://via.placeholder.com/1200x400" alt="Course Cover" class="w-full h-72 object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute bottom-6 left-8 right-8">
+                        <span class="px-4 py-2 bg-teal-500 text-white text-sm font-semibold rounded-full mb-4 inline-block">
+                            <?php echo htmlspecialchars($data['course']['category_name'] ?? 'Uncategorized'); ?>
+                        </span>
+                        <h1 class="text-4xl font-bold text-white mb-2">
+                            <?php echo htmlspecialchars($data['course']['title']); ?>
+                        </h1>
+                    </div>
+                </div>
+                
+                <div class="p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 bg-gray-50 rounded-xl p-6">
+                        <div class="text-center">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-8 h-8 text-teal-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                <p class="text-sm text-gray-500">Instructor</p>
+                                <p class="text-lg font-semibold text-gray-900">
+                                    <?php echo htmlspecialchars($data['course']['teacher_name']); ?>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-8 h-8 text-teal-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                <p class="text-sm text-gray-500">Students Enrolled</p>
+                                <p class="text-lg font-semibold text-gray-900">
+                                    <?php echo number_format($data['course']['student_count'] ?? 0); ?>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <div class="flex flex-col items-center">
+                                <svg class="w-8 h-8 text-teal-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <p class="text-sm text-gray-500">Content Type</p>
+                                <p class="text-lg font-semibold text-gray-900">
+                                    <?php echo ucfirst(htmlspecialchars($data['course']['content_type'])); ?>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
 
-  <!-- Navbar -->
-  <?php include '../views/components/header.php'; ?>
+                    <?php if (!empty($data['course']['tags'])): ?>
+                        <div class="flex flex-wrap gap-2 mb-8">
+                            <?php foreach ($data['course']['tags'] as $tag): ?>
+                                <span class="px-4 py-2 bg-teal-50 text-teal-700 text-sm rounded-full border border-teal-100 hover:bg-teal-100 transition-colors">
+                                    <?php echo htmlspecialchars($tag['name']); ?>
+                                </span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
 
+                    <div class="prose max-w-none">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-4">About this course</h2>
+                        <div class="text-gray-600 leading-relaxed bg-gray-50 rounded-xl p-6">
+                            <?php echo nl2br(htmlspecialchars($data['course']['description'])); ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-  <!-- Course Details Section -->
-  <main class="flex-grow container mx-auto mt-8">
-    <div class="bg-white rounded-lg shadow-lg p-8">
-      <!-- Course Title -->
-      <h1 class="text-4xl font-bold text-gray-900">Introduction to JavaScript</h1>
+            <!-- Enroll Button -->
+            <div class="text-center">
+                <?php if (isset($_GET['error'])): ?>
+                    <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-xl">
+                        <?php echo htmlspecialchars($_GET['error']); ?>
+                    </div>
+                <?php endif; ?>
 
-      <!-- Course Metadata -->
-      <div class="mt-4 text-gray-600 text-sm space-y-2">
-        <p><strong>Instructor:</strong> John Doe</p>
-        <p><strong>Category:</strong> Programming</p>
-        <p><strong>Tags:</strong> JavaScript, Web Development</p>
-        <p><strong>Duration:</strong> 10 hours</p>
-      </div>
-
-      <!-- Course Overview -->
-      <div class="mt-6">
-        <h2 class="text-2xl font-semibold text-gray-800">Course Overview</h2>
-        <p class="mt-2 text-gray-700">
-          This course is designed to teach you the fundamentals of JavaScript, one of the most popular programming languages in web development. Learn how to write clean and efficient code, work with the DOM, and create interactive web applications.
-        </p>
-      </div>
-
-      <!-- Course Content -->
-      <div class="mt-6">
-        <h2 class="text-2xl font-semibold text-gray-800">What You'll Learn</h2>
-        <ul class="mt-2 space-y-2 list-disc list-inside text-gray-700">
-          <li>Variables, Data Types, and Operators</li>
-          <li>Functions and Control Flow</li>
-          <li>DOM Manipulation</li>
-          <li>Events and Event Listeners</li>
-          <li>ES6+ Features</li>
-        </ul>
-      </div>
-
-      <!-- Enroll Button -->
-      <div class="mt-6 flex justify-between items-center">
-        <span class="text-lg font-bold text-teal-600">$49.99</span>
-        <button class="bg-teal-600 text-white py-2 px-6 rounded-lg hover:bg-teal-700">
-          Enroll Now
-        </button>
-      </div>
-    </div>
-  </main>
-  <?php include '../views/components/footer.php'; ?>
-
-
+                <form action="/enroll-course" method="POST" class="inline-block">
+                    <input type="hidden" name="course_id" value="<?php echo $data['course']['id']; ?>">
+                    <button type="submit" 
+                            class="bg-teal-600 text-white px-12 py-4 rounded-xl font-semibold hover:bg-teal-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">
+                        Enroll in Course
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+    <?php require_once '../views/components/footer.php'; ?>
 </body>
 </html>

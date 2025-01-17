@@ -47,8 +47,8 @@ class Teacher extends User {
         if ($stmt->rowCount() > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             return $user['status'];
+            exit;
         }
-
         return false;
     }
 }

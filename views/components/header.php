@@ -25,7 +25,7 @@ if (!isset($_SESSION['Logged_in'])) {
     } elseif (isset($_SESSION['is_teacher'])) {
         
         $navLinks = [
-            ['href' => '/', 'text' => 'Dashboard'],
+            ['href' => '/teacher/dashboard', 'text' => 'Dashboard'],
             ['href' => '/my-courses', 'text' => 'My Courses'],
             ['href' => '/add-course', 'text' => 'Add Course'],
             ['href' => '/statistics', 'text' => 'Statistics'],
@@ -36,7 +36,7 @@ if (!isset($_SESSION['Logged_in'])) {
         $navLinks = [
             ['href' => '/', 'text' => 'Dashboard'],
             ['href' => '/courses', 'text' => 'Courses'],
-            ['href' => '/my-courses', 'text' => 'My Courses'],
+            ['href' => '/student/my-courses', 'text' => 'My Courses'],
             ['href' => '/profile', 'text' => 'Profile'],
             ['href' => '/logout', 'text' => 'Logout', 'class' => 'text-teal-600 border border-teal-600 px-4 py-1 rounded hover:bg-teal-600 hover:text-white']
         ];

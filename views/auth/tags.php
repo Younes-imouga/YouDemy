@@ -19,7 +19,7 @@
     var input = document.querySelector('input[name=tags]');
 
     new Tagify(input, {
-        originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',') // Convert to comma-separated string
+        originalInputValueFormat: valuesArr => valuesArr.map(item => item.value).join(',')
     });
 </script>
 </html>

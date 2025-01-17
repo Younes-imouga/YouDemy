@@ -1,3 +1,5 @@
+<?php include '../views/components/header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,75 +7,83 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Youdemy Platform - Add Course</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
-
-  <!-- Navbar -->
-  <header class="bg-white shadow">
-    <div class="container mx-auto flex justify-between items-center p-4">
-      <a href="#" class="text-2xl font-bold text-teal-600">Youdemy</a>
-      <nav class="space-x-4">
-        <a href="/" class="text-gray-700 hover:text-teal-600">Home</a>
-        <a href="/courses" class="text-gray-700 hover:text-teal-600">Courses</a>
-        <a href="/my-courses" class="text-teal-600">My Courses</a>
-        <a href="/login" class="text-gray-700 hover:text-teal-600">Login</a>
-        <a href="/register" class="text-teal-600">Sign Up</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- Add Course Form -->
   <main class="flex-grow container mx-auto mt-8">
     <h1 class="text-4xl font-bold text-gray-900 text-center mb-8">Add New Course</h1>
 
-    <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg mx-auto">
-      <form>
-        <div class="mb-4">
-          <label for="title" class="block text-gray-700 font-semibold">Course Title</label>
-          <input type="text" id="title" class="w-full p-3 border border-gray-300 rounded mt-2" placeholder="Enter course title" />
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-2xl mx-auto">
+      <?php if (isset($_GET['error'])): ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <?php echo htmlspecialchars($_GET['error']); ?>
+        </div>
+      <?php endif; ?>
+
+      <form action="/teacher/add-course" method="POST" class="space-y-6">
+        <div>
+          <label for="title" class="block text-gray-700 font-semibold mb-2">Course Title</label>
+          <input type="text" id="title" name="title" required
+                 class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500"
+                 placeholder="Enter course title">
         </div>
 
-        <div class="mb-4">
-          <label for="description" class="block text-gray-700 font-semibold">Course Description</label>
-          <textarea id="description" class="w-full p-3 border border-gray-300 rounded mt-2" placeholder="Enter course description" rows="4"></textarea>
+        <div>
+          <label for="description" class="block text-gray-700 font-semibold mb-2">Course Description</label>
+          <textarea id="description" name="description" required rows="4"
+                    class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500"
+                    placeholder="Enter course description"></textarea>
         </div>
 
-        <div class="mb-4">
-          <label for="content" class="block text-gray-700 font-semibold">Course Content (URL or File)</label>
-          <input type="text" id="content" class="w-full p-3 border border-gray-300 rounded mt-2" placeholder="Enter course content URL or upload a file" />
-        </div>
-
-        <div class="mb-4">
-          <label for="tags" class="block text-gray-700 font-semibold">Tags</label>
-          <input type="text" id="tags" class="w-full p-3 border border-gray-300 rounded mt-2" placeholder="Enter tags, separated by commas" />
-        </div>
-
-        <div class="mb-4">
-          <label for="category" class="block text-gray-700 font-semibold">Category</label>
-          <select id="category" class="w-full p-3 border border-gray-300 rounded mt-2">
+        <div>
+          <label for="category" class="block text-gray-700 font-semibold mb-2">Category</label>
+          <select id="category" name="category_id" required
+                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
             <option value="">Select a category</option>
-            <option value="programming">Programming</option>
-            <option value="design">Design</option>
-            <option value="business">Business</option>
-            <!-- More categories can be added here -->
+            <?php foreach ($data['categories'] as $category): ?>
+              <option value="<?php echo $category['id']; ?>">
+                <?php echo htmlspecialchars($category['name']); ?>
+              </option>
+            <?php endforeach; ?>
           </select>
         </div>
 
-        <button type="submit" class="w-full bg-teal-600 text-white py-2 rounded mt-4 hover:bg-teal-700">Add Course</button>
+        <div>
+          <label for="content_type" class="block text-gray-700 font-semibold mb-2">Content Type</label>
+          <select id="content_type" name="content_type" required
+                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+            <option value="">Select content type</option>
+            <option value="video">Video</option>
+            <option value="document">Document</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="tags" class="block text-gray-700 font-semibold mb-2">Tags</label>
+          <select id="multiSelect" multiple name="tags[]" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500"> 
+            <?php foreach ($data['tags'] as $tag): ?>
+              <option value="<?php echo htmlspecialchars($tag['id'])?>"><?php echo htmlspecialchars($tag['name']); ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+
+        <button type="submit" 
+                class="w-full bg-teal-600 text-white py-3 px-4 rounded hover:bg-teal-700 transition duration-200">
+          Create Course
+        </button>
       </form>
     </div>
   </main>
-
-  <!-- Footer -->
-  <footer class="bg-gray-800 text-white mt-12">
-    <div class="container mx-auto text-center p-4">
-      <p class="text-sm">© 2025 Youdemy - All Rights Reserved</p>
-      <nav class="space-x-4 mt-2">
-        <a href="/privacy" class="text-gray-400 hover:text-white">Privacy Policy</a>
-        <a href="/terms" class="text-gray-400 hover:text-white">Terms of Service</a>
-      </nav>
-    </div>
-  </footer>
-
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const multiSelect = new Choices("#multiSelect", {
+        removeItemButton: true,
+        placeholder: true,
+        placeholderValue: "Select multiple options...",
+      });
+    });
+  </script>
+  <?php include '../views/components/footer.php'; ?>
 </body>
 </html>
