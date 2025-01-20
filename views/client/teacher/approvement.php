@@ -10,7 +10,6 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Teacher Approval Waiting Section -->
   <main class="flex-grow container mx-auto mt-16">
     <div class="bg-white p-8 rounded-lg shadow-lg text-center max-w-lg mx-auto">
       <h1 class="text-3xl font-bold text-gray-800 mb-4">Waiting for Admin Approval</h1>
@@ -24,7 +23,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <?php include '../views/components/footer.php'; ?>
 
 </body>

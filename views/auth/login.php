@@ -9,7 +9,6 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Login Content -->
   <section class="flex-grow container mx-auto mt-8">
     <div class="text-center w-1/4 mx-auto bg-white p-8 rounded-lg shadow-lg mt-[8.5%]">
       <h1 class="text-4xl font-extrabold text-gray-900">Login to Your Account</h1>

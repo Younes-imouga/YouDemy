@@ -11,21 +11,17 @@
 <?php include '../views/components/header.php'; ?>
 
 
-  <!-- Sign Up Content -->
-  <section class="flex-grow container mx-auto mt-8">
+<section class="flex-grow container mx-auto mt-8">
     <div class="text-center w-1/4 mx-auto bg-white p-8 rounded-lg shadow-lg mt-[8.5%]">
       <h1 class="text-4xl font-extrabold text-gray-900">Create Your Account</h1>
       <form class="mt-8" method="post" action="/register">
-        <!-- Name Input -->
-        <input type="text" name="name" placeholder="UserName" class="w-full p-3 border border-gray-300 rounded mt-4" required />
+        
+      <input type="text" name="name" placeholder="UserName" class="w-full p-3 border border-gray-300 rounded mt-4" required />
 
-      <!-- Email Input -->
         <input type="email" name="email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded mt-4" required />
 
-        <!-- Password Input -->
         <input type="password" name="password" placeholder="Password" class="w-full p-3 border border-gray-300 rounded mt-4" required />
 
-        <!-- Role Selection -->
         <div class="mt-4 text-left">
           <label for="role" class="block text-sm text-gray-600">Select your role</label>
           <select id="role" name="role" class="w-full p-3 border border-gray-300 rounded mt-2">
@@ -34,7 +30,6 @@
           </select>
         </div>
 
-        <!-- Sign Up Button -->
         <button type="submit" name="register" class="w-full bg-teal-600 text-white py-2 rounded mt-4 hover:bg-teal-700">Sign Up</button>
       </form>
       <p class="mt-4 text-sm text-gray-600">

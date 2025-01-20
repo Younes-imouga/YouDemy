@@ -53,13 +53,13 @@
                       $remainingCount = count($course['tags']) - 3;
                       
                       foreach ($displayTags as $tag): ?>
-                        <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full">
+                        <span class="px-2 py-1 bg-gray-200 text-black text-xs rounded-full">
                           <?php echo htmlspecialchars($tag['name']); ?>
                         </span>
                       <?php endforeach; 
                       
                       if ($remainingCount > 0): ?>
-                        <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full flex items-center gap-1 cursor-help"
+                        <span class="px-2 py-1 bg-teal-100 text-black text-xs rounded-full flex items-center gap-1 cursor-help"
                               title="<?php echo htmlspecialchars(implode(', ', array_map(function($tag) { return $tag['name']; }, array_slice($course['tags'], 3)))); ?>">
                           +<?php echo $remainingCount; ?>
                         </span>
@@ -69,6 +69,7 @@
                 </td>
                 <td class="px-6 py-4 border border-gray-300">
                   <a href="/admin/edit-course/<?php echo $course['id']; ?>" class="text-teal-600 hover:text-teal-900 mr-3">Edit</a>
+                  <a href="/course/<?php echo $course['id']; ?>" class="text-blue-600 hover:text-blue-900 mr-3">Stats</a>
                   <form action="/admin/delete-course" method="POST" class="inline">
                     <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">
                     <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Are you sure you want to delete this course?')">Delete</button>

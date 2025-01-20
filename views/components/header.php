@@ -27,8 +27,8 @@ if (!isset($_SESSION['Logged_in'])) {
         $navLinks = [
             ['href' => '/teacher/dashboard', 'text' => 'Dashboard'],
             ['href' => '/my-courses', 'text' => 'My Courses'],
+            ['href' => '/teacher/enrollments', 'text' => 'Pending Enrollments'],
             ['href' => '/add-course', 'text' => 'Add Course'],
-            ['href' => '/statistics', 'text' => 'Statistics'],
             ['href' => '/logout', 'text' => 'Logout', 'class' => 'text-teal-600 border border-teal-600 px-4 py-1 rounded hover:bg-teal-600 hover:text-white']
         ];
     } else {
@@ -37,7 +37,6 @@ if (!isset($_SESSION['Logged_in'])) {
             ['href' => '/', 'text' => 'Dashboard'],
             ['href' => '/courses', 'text' => 'Courses'],
             ['href' => '/student/my-courses', 'text' => 'My Courses'],
-            ['href' => '/profile', 'text' => 'Profile'],
             ['href' => '/logout', 'text' => 'Logout', 'class' => 'text-teal-600 border border-teal-600 px-4 py-1 rounded hover:bg-teal-600 hover:text-white']
         ];
     }

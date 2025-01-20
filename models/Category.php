@@ -7,15 +7,38 @@ class Category extends Db{
         parent::__construct();
     }
 
-    public function getAllCategories() {
-        try {
-            $sql = "SELECT * FROM categories ORDER BY name";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->execute();
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
-        } catch (PDOException $e) {
-            return [];
-        }
+    public function getAllCategoriesSelect(){
+            try {
+                $sql = "SELECT * FROM categories ORDER BY name";
+                $stmt = $this->conn->prepare($sql);
+                $stmt->execute();
+                return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            } catch (PDOException $e) {
+                return [];
+            }
+    }
+
+    public function getAllCategories($page = 1, $perPage = 5) {
+        $offset = ($page - 1) * $perPage;
+        
+        $countSql = "SELECT COUNT(*) FROM categories";
+        $countStmt = $this->conn->prepare($countSql);
+        $countStmt->execute();
+        $totalCount = (int)$countStmt->fetchColumn();
+        
+        $sql = "SELECT * FROM categories ORDER BY name ASC LIMIT :offset, :per_page";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $perPage, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return [
+            'categories' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'pagination' => [
+                'currentPage' => (int)$page,
+                'lastPage' => (int)ceil($totalCount / $perPage)
+            ]
+        ];
     }
 
     public function createCategory($name, $description) {

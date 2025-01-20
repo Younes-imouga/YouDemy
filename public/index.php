@@ -52,6 +52,8 @@ if (!isset($_SESSION['Logged_in'])) {
         Route::get("/admin/teacher-approvals", [AdminController::class, 'showTeacherApprovals']);
 
         Route::get("/admin/manage-users", [AdminController::class, 'showUsers']);
+        Route::post("/admin/change-user-status", [AdminController::class, 'changeUserStatus']);
+        
         Route::get("/admin/manage-courses", [AdminController::class, 'showCourses']);
 
         Route::get("/admin/categories", [AdminController::class, 'showCategories']);
@@ -63,6 +65,8 @@ if (!isset($_SESSION['Logged_in'])) {
         Route::get("/admin/tags", [AdminController::class, 'showTags']);
         Route::post("/admin/add-tag", [AdminController::class, 'addTag']);
         Route::post("/admin/delete-tag", [AdminController::class, 'deleteTag']);
+
+        
 
 
         // Teacher
@@ -78,6 +82,12 @@ if (!isset($_SESSION['Logged_in'])) {
         Route::get('/teacher/add-course', [TeacherController::class, 'showAddCourse']);
         Route::post('/teacher/add-course', [TeacherController::class, 'addCourse']);
 
+        Route::post('/teacher/delete-course', [TeacherController::class, 'deleteCourse']);
+
+        Route::get('/teacher/enrollments', [TeacherController::class, 'showEnrollments']);
+
+        Route::post('/teacher/accept-enrollment', [TeacherController::class, 'acceptEnrollment']);
+        Route::post('/teacher/refuse-enrollment', [TeacherController::class, 'refuseEnrollment']);
 
         // Student
         Route::get("/student/dashboard", [StudentController::class, 'showDashboard']);
@@ -89,6 +99,7 @@ if (!isset($_SESSION['Logged_in'])) {
 
         Route::post("/enroll-course", [CourseController::class, 'enrollCourse']);
 
+        Route::get("/student/courseContent", [StudentController::class, 'showCourseContent']);
 
 
 Route::get("/403", [BaseController::class, 'render403']);

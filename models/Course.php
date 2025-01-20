@@ -7,41 +7,92 @@ class Course extends Db{
         parent::__construct();
     }
 
-    public function getAllCourses() {
-        $sql = "SELECT c.*, u.username as teacher_name, cat.name as category_name,
-                GROUP_CONCAT(t.name) as tag_names,
-                GROUP_CONCAT(t.id) as tag_ids
-                FROM courses c 
-                JOIN users u ON c.teacher_id = u.id 
-                LEFT JOIN categories cat ON c.category_id = cat.id 
-                LEFT JOIN course_tags ct ON c.id = ct.course_id
-                LEFT JOIN tags t ON ct.tag_id = t.id
-                GROUP BY c.id
-                ORDER BY c.created_at DESC";
+    public function getAllCourses($page = 1, $perPage = 6) {
+        $offset = ($page - 1) * $perPage;
+    
+        $countSql = "SELECT COUNT(*) FROM courses";
+        $countStmt = $this->conn->prepare($countSql);
+        $countStmt->execute();
+        $totalCount = (int)$countStmt->fetchColumn();
+    
+        $sql = "SELECT c.*, u.username as teacher_name, cat.name as category_name FROM courses c JOIN users u ON c.teacher_id = u.id LEFT JOIN categories cat ON c.category_id = cat.id ORDER BY c.created_at DESC LIMIT :offset, :perPage";
+    
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':perPage', $perPage, PDO::PARAM_INT);
         $stmt->execute();
         $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $this->processCourseTags($courses);
+    
+        $pagination = [
+            'total' => $totalCount,
+            'currentPage' => $page,
+            'perPage' => $perPage,
+            'lastPage' => (int)ceil($totalCount / $perPage),
+            'from' => $offset + 1,
+            'to' => min($offset + $perPage, $totalCount)
+        ];
+    
+        return [
+            'courses' => $courses,
+            'pagination' => $pagination
+        ];
     }
 
-    public function getCoursesByTeacher($teacherId) {
-        $sql = "SELECT c.*, cat.name as category_name,
-                GROUP_CONCAT(t.name) as tag_names,
-                GROUP_CONCAT(t.id) as tag_ids
-                FROM courses c 
-                LEFT JOIN categories cat ON c.category_id = cat.id 
-                LEFT JOIN course_tags ct ON c.id = ct.course_id
-                LEFT JOIN tags t ON ct.tag_id = t.id
-                WHERE c.teacher_id = :teacher_id 
-                GROUP BY c.id
-                ORDER BY c.created_at DESC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':teacher_id', $teacherId);
-        $stmt->execute();
-        $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $this->processCourseTags($courses);
+    public function getCoursesByTeacher($teacherId, $page = 1, $perPage = 5) {
+        try {
+            $offset = ($page - 1) * $perPage;
+            
+            
+            $countSql = "SELECT COUNT(*) FROM courses WHERE teacher_id = :teacher_id";
+            $countStmt = $this->conn->prepare($countSql);
+            $countStmt->bindValue(':teacher_id', $teacherId, PDO::PARAM_INT);
+            $countStmt->execute();
+            $totalCount = (int)$countStmt->fetchColumn();
+            
+            
+            error_log("Total courses found: " . $totalCount);
+            
+            $sql = "SELECT c.*, cat.name as category_name, (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count, GROUP_CONCAT(DISTINCT t.name) as tag_names, GROUP_CONCAT(DISTINCT t.id) as tag_ids FROM courses c  LEFT JOIN categories cat ON c.category_id = cat.id  LEFT JOIN course_tags ct ON c.id = ct.course_id LEFT JOIN tags t ON ct.tag_id = t.id WHERE c.teacher_id = :teacher_id  GROUP BY c.id ORDER BY c.created_at DESC LIMIT :offset, :per_page";
+                    
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindValue(':teacher_id', $teacherId, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+            $stmt->bindValue(':per_page', $perPage, PDO::PARAM_INT);
+            $stmt->execute();
+            
+            $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $courses = $this->processCourseTags($courses);
+            
+            $pagination = [
+                'total' => $totalCount,
+                'currentPage' => (int)$page,
+                'perPage' => (int)$perPage,
+                'lastPage' => (int)ceil($totalCount / $perPage),
+                'from' => $offset + 1,
+                'to' => min($offset + $perPage, $totalCount)
+            ];
+            
+            
+            error_log("Pagination data: " . print_r($pagination, true));
+            
+            return [
+                'courses' => $courses,
+                'pagination' => $pagination
+            ];
+        } catch (PDOException $e) {
+            error_log("Database error: " . $e->getMessage());
+            return [
+                'courses' => [],
+                'pagination' => [
+                    'total' => 0,
+                    'currentPage' => 1,
+                    'perPage' => $perPage,
+                    'lastPage' => 1,
+                    'from' => 0,
+                    'to' => 0
+                ]
+            ];
+        }
     }
 
     private function processCourseTags($courses) {
@@ -65,61 +116,41 @@ class Course extends Db{
         try {
             $this->conn->beginTransaction();
             
-            // Insert course
-            $sql = "INSERT INTO courses (title, description, category_id, content_type, teacher_id) 
-                    VALUES (:title, :description, :category_id, :content_type, :teacher_id)";
+            $sql = "INSERT INTO courses (title, description, category_id, content_type, content_url,content_path,teacher_id) VALUES ( :title,  :description,  :category_id,  :content_type,  :content_url, :content_path, :teacher_id)";
+            
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'category_id' => $data['category_id'],
                 'content_type' => $data['content_type'],
+                'content_url' => $data['content_type'] === 'video' ? $data['content_url'] : null,
+                'content_path' => $data['content_type'] === 'document' ? $data['content_path'] : null,
                 'teacher_id' => $data['teacher_id']
             ]);
 
             $courseId = $this->conn->lastInsertId();
 
-            // Insert course tags if present
-            if (!empty($data['tags']) && is_array($data['tags'])) {
-                $sql = "INSERT INTO course_tags (course_id, tag_id) VALUES (:course_id, :tag_id)";
-                $stmt = $this->conn->prepare($sql);
+            if (!empty($data['tags'])) {
+                $tagSql = "INSERT INTO course_tags (course_id, tag_id) VALUES (:course_id, :tag_id)";
+                $tagStmt = $this->conn->prepare($tagSql);
                 
                 foreach ($data['tags'] as $tagId) {
-                    if (!empty($tagId)) {
-                        $stmt->execute([
-                            'course_id' => $courseId,
-                            'tag_id' => $tagId
-                        ]);
-                    }
+                    $tagStmt->execute([
+                        'course_id' => $courseId,
+                        'tag_id' => $tagId
+                    ]);
                 }
             }
-
+            
             $this->conn->commit();
             return true;
+            
         } catch (PDOException $e) {
             $this->conn->rollBack();
+            error_log("Error creating course: " . $e->getMessage());
             return false;
         }
-    }
-
-    private function getOrCreateTag($tagName) {
-        
-        $sql = "SELECT id FROM tags WHERE name = :name";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':name', $tagName);
-        $stmt->execute();
-        
-        if ($tag = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            return $tag['id'];
-        }
-
-        
-        $sql = "INSERT INTO tags (name) VALUES (:name)";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':name', $tagName);
-        $stmt->execute();
-        
-        return $this->conn->lastInsertId();
     }
 
     public function addCourseTags($courseId, $tagIds) {
@@ -163,17 +194,7 @@ class Course extends Db{
     }
 
     public function getCourseWithDetails($courseId) {
-        $sql = "SELECT c.*, u.username as teacher_name, cat.name as category_name,
-                GROUP_CONCAT(t.name) as tag_names,
-                GROUP_CONCAT(t.id) as tag_ids,
-                (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count
-                FROM courses c 
-                JOIN users u ON c.teacher_id = u.id 
-                LEFT JOIN categories cat ON c.category_id = cat.id 
-                LEFT JOIN course_tags ct ON c.id = ct.course_id
-                LEFT JOIN tags t ON ct.tag_id = t.id
-                WHERE c.id = :course_id
-                GROUP BY c.id";
+        $sql = "SELECT c.*, u.username as teacher_name, cat.name as category_name, GROUP_CONCAT(t.name) as tag_names, GROUP_CONCAT(t.id) as tag_ids, (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as student_count FROM courses c  JOIN users u ON c.teacher_id = u.id  LEFT JOIN categories cat ON c.category_id = cat.id  LEFT JOIN course_tags ct ON c.id = ct.course_id LEFT JOIN tags t ON ct.tag_id = t.id WHERE c.id = :course_id GROUP BY c.id";
                 
         $stmt = $this->conn->prepare($sql);
         $stmt->execute(['course_id' => $courseId]);
@@ -183,7 +204,7 @@ class Course extends Db{
             return null;
         }
         
-        // Process tags
+        
         $course['tags'] = [];
         if (!empty($course['tag_names']) && !empty($course['tag_ids'])) {
             $names = explode(',', $course['tag_names']);
@@ -200,7 +221,7 @@ class Course extends Db{
     }
 
     public function enrollStudent($courseId, $studentId) {
-        // Check if already enrolled
+        
         $checkSql = "SELECT id FROM enrollments WHERE course_id = :course_id AND student_id = :student_id";
         $checkStmt = $this->conn->prepare($checkSql);
         $checkStmt->execute([
@@ -209,12 +230,11 @@ class Course extends Db{
         ]);
         
         if ($checkStmt->fetch()) {
-            return ['success' => false, 'message' => 'You are already enrolled in this course'];
+            return ['success' => false, 'message' => 'You are already enrolled in this course waiting for approval'];   
         }
         
-        // Enroll the student
-        $sql = "INSERT INTO enrollments (course_id, student_id, enrolled_at) 
-                VALUES (:course_id, :student_id, NOW())";
+        
+        $sql = "INSERT INTO enrollments (course_id, student_id, status) VALUES (:course_id, :student_id, 'pending')";
         $stmt = $this->conn->prepare($sql);
         
         try {
@@ -226,5 +246,110 @@ class Course extends Db{
         } catch (PDOException $e) {
             return ['success' => false, 'message' => 'Failed to enroll in the course'];
         }
+    }
+
+    public function getCoursesByStudent($studentId, $currentPage, $perPage) {
+        $offset = ($currentPage - 1) * $perPage;
+
+        $countStmt = $this->conn->prepare("SELECT COUNT(*) FROM enrollments WHERE student_id = :student_id AND status = 'active'");
+        $countStmt->bindParam(':student_id', $studentId);
+        $countStmt->execute();
+        $totalCount = (int)$countStmt->fetchColumn();
+
+        $stmt = $this->conn->prepare("SELECT c.*, u.username as teacher_name, cat.name as category_name FROM courses c JOIN enrollments e ON c.id = e.course_id JOIN users u ON c.teacher_id = u.id LEFT JOIN categories cat ON c.category_id = cat.id WHERE e.status = 'active' AND e.student_id = :student_id LIMIT :offset, :perPage");
+        $stmt->bindParam(':student_id', $studentId);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindParam(':perPage', $perPage, PDO::PARAM_INT);
+        $stmt->execute();
+        $courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $pagination = [
+            'total' => $totalCount,
+            'currentPage' => $currentPage,
+            'perPage' => $perPage,
+            'lastPage' => (int)ceil($totalCount / $perPage),
+            'from' => $offset + 1,
+            'to' => min($offset + $perPage, $totalCount)
+        ];
+
+        return [
+            'courses' => $courses,
+            'pagination' => $pagination
+        ];
+    }
+    
+    public function getCourseDetails($courseId) {
+        $sql = "SELECT c.*, u.username as teacher_name, cat.name as category_name, (SELECT GROUP_CONCAT(s.id) FROM enrollments e JOIN users s ON e.student_id = s.id WHERE e.course_id = c.id) as enrolled_students FROM courses c JOIN users u ON c.teacher_id = u.id LEFT JOIN categories cat ON c.category_id = cat.id WHERE c.id = :course_id";
+    
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute(['course_id' => $courseId]);
+        $course = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        $course['enrolled_students'] = !empty($course['enrolled_students']) ? explode(',', $course['enrolled_students']) : [];
+    
+        return $course;
+    }
+
+    public function isUserEnrolled($courseId, $userId) {
+        $stmt = $this->conn->prepare("SELECT COUNT(*) FROM enrollments WHERE course_id = :course_id AND student_id = :user_id AND status = 'active'");
+        $stmt->bindParam(':course_id', $courseId);
+        $stmt->bindParam(':user_id', $userId);
+        $stmt->execute();
+        
+        return $stmt->fetchColumn() > 0;
+    }
+
+    public function enrollInCourse($courseId, $studentId) {
+        $sql = "INSERT INTO enrollments (course_id, student_id, status) VALUES (:course_id, :student_id, 'pending')";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':course_id', $courseId, PDO::PARAM_INT);
+        $stmt->bindValue(':student_id', $studentId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function showPendingEnrollments() {
+        $teacherId = $_SESSION['user_id'];
+        $sql = "SELECT e.id, c.title, u.username 
+                FROM enrollments e 
+                JOIN courses c ON e.course_id = c.id 
+                JOIN users u ON e.student_id = u.id 
+                WHERE c.teacher_id = :teacher_id AND e.status = 'pending'";
+        
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':teacher_id', $teacherId, PDO::PARAM_INT);
+        $stmt->execute();
+        $pendingEnrollments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $pendingEnrollments;
+    }
+
+    public function getEnrollmentsByTeacher($teacherId) {
+        $sql = "SELECT e.id, c.title, u.username AS student_name, e.status FROM enrollments e JOIN courses c ON e.course_id = c.id JOIN users u ON e.student_id = u.id WHERE c.teacher_id = :teacher_id AND e.status = 'pending'";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':teacher_id', $teacherId, PDO::PARAM_INT);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function acceptEnrollment($enrollmentId) {
+        $sql = "UPDATE enrollments SET status = 'active' WHERE id = :enrollment_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':enrollment_id', $enrollmentId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function refuseEnrollment($enrollmentId) {
+        $sql = "DELETE FROM enrollments WHERE id = :enrollment_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':enrollment_id', $enrollmentId, PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function deleteCourse($courseId) {
+        $sql = "DELETE FROM courses WHERE id = :course_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':course_id', $courseId, PDO::PARAM_INT);
+        $stmt->execute();
     }
 } 

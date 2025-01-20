@@ -10,8 +10,6 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-
-  <!-- Dashboard Content -->
   <main class="flex-grow container mx-auto py-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-6">Welcome, Student!</h1>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -30,7 +28,6 @@
     </div>
   </main>
 
-  <!-- Footer -->
   <?php include '../views/components/footer.php'; ?>
 
 </body>

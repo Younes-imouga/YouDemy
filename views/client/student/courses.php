@@ -13,9 +13,7 @@
     <div class="flex justify-between items-center mb-8">
       <h1 class="text-4xl font-bold text-gray-900">Available Courses</h1>
       <div class="relative">
-        <input type="text" 
-               placeholder="Search courses..." 
-               class="px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
+        <input type="text" placeholder="Search courses..." class="px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-teal-500 focus:border-teal-500">
       </div>
     </div>
 
@@ -23,9 +21,6 @@
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <?php foreach ($data['courses'] as $course): ?>
           <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-xl">
-            <img src="https://via.placeholder.com/400x250" alt="Course Image" 
-                 class="w-full h-48 object-cover">
-            
             <div class="p-6">
               <div class="flex items-center mb-2">
                 <span class="px-3 py-1 bg-teal-100 text-teal-800 text-xs font-semibold rounded-full">
@@ -60,8 +55,7 @@
                   <?php endforeach; 
                   
                   if ($remainingCount > 0): ?>
-                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full flex items-center gap-1 hover:bg-teal-200 transition-colors cursor-help" 
-                          title="<?php echo htmlspecialchars(implode(', ', array_map(function($tag) { return $tag['name']; }, array_slice($course['tags'], 3)))); ?>">
+                    <span class="px-2 py-1 bg-teal-100 text-teal-800 text-xs rounded-full flex items-center gap-1 hover:bg-teal-200 transition-colors cursor-help" title="<?php echo htmlspecialchars(implode(', ', array_map(function($tag) { return $tag['name']; }, array_slice($course['tags'], 3)))); ?>">
                       <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                       </svg>
@@ -86,6 +80,41 @@
         <p class="text-xl text-gray-600">No courses available at the moment.</p>
       </div>
     <?php endif; ?>
+
+    <div class="mt-6">
+        <?php if (isset($data['pagination']) && $data['pagination']['lastPage'] > 1): ?>
+            <div class="flex items-center justify-center border-t border-gray-200 bg-gray-100 px-4 py-3 sm:px-6 rounded-lg">
+                <div class="inline-flex rounded-md shadow-sm">
+                    <?php if ($data['pagination']['currentPage'] > 1): ?>
+                        <a href="courses?page=<?php echo ($data['pagination']['currentPage'] - 1); ?>"
+                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                            Previous
+                        </a>
+                    <?php endif; ?>
+
+                    <?php
+                    $start = max(1, $data['pagination']['currentPage'] - 2);
+                    $end = min($data['pagination']['lastPage'], $start + 4);
+                    
+                    for ($i = $start; $i <= $end; $i++): ?>
+                        <a href="courses?page=<?php echo $i; ?>"
+                           class="px-4 py-2 text-sm font-medium <?php echo $i === $data['pagination']['currentPage'] 
+                                ? 'text-white bg-teal-600 border border-teal-600' 
+                                : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'; ?>">
+                            <?php echo $i; ?>
+                        </a>
+                    <?php endfor; ?>
+
+                    <?php if ($data['pagination']['currentPage'] < $data['pagination']['lastPage']): ?>
+                        <a href="courses?page=<?php echo ($data['pagination']['currentPage'] + 1); ?>"
+                           class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                            Next
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
   </main>
 
   <?php include '../views/components/footer.php'; ?>

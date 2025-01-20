@@ -7,7 +7,6 @@ class User extends Db {
     }
 
     public function register($name, $email, $password, $role) {
-        // Check if email or username already exists
         $sql = "SELECT * FROM users WHERE email = :email OR username = :name";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':email', $email);
@@ -61,33 +60,5 @@ class User extends Db {
             return true;
         }
         return false;
-    }
-
-    public function getAllUsers() {
-        $sql = "SELECT id, username, email, role, status FROM users ORDER BY id DESC";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getPendingTeachers() {
-        $sql = "SELECT id, username, email FROM users WHERE role = 'teacher' AND status = 'pending'";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function approveTeacher($id) {
-        $sql = "UPDATE users SET status = 'active' WHERE id = :id AND role = 'teacher'";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
-    }
-
-    public function deleteTeacher($id) {
-        $sql = "DELETE FROM users WHERE id = :id AND role = 'teacher'";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':id', $id);
-        return $stmt->execute();
     }
 }

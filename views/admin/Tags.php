@@ -14,8 +14,6 @@
 
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-
-  <!-- Content -->
   <main class="flex-grow container mx-auto mt-8">
     <h1 class="text-3xl font-bold text-gray-800 mb-6">Tag Management</h1>
 
@@ -31,7 +29,6 @@
         </div>
     <?php endif; ?>
 
-    <!-- Add New Tag -->
     <div class="overflow-x-auto bg-white shadow rounded-lg p-4 mb-6">
         <div class="mt-6">
             <h2 class="text-xl font-bold text-gray-800 mb-2">Add New Tag</h2>
@@ -42,9 +39,8 @@
         </div>
     </div>
 
-    <!-- Table for Tag Management -->
-    <div class="overflow-x-auto bg-white shadow rounded-lg p-4">
-        <?php if (isset($data['tags']) && !empty($data['tags'])): ?>
+    <?php if (isset($data['tags']) && !empty($data['tags'])): ?>
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
             <table class="min-w-full border-collapse border border-gray-300">
                 <thead>
                     <tr class="bg-gray-100 text-gray-800">
@@ -66,10 +62,47 @@
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        <?php else: ?>
-            <p class="text-gray-600 text-center mt-4">No tags found.</p>
-        <?php endif; ?>
-    </div>
+        </div>
+        
+        <div class="mt-6">
+            <?php if (isset($data['pagination']) && $data['pagination']['lastPage'] > 1): ?>
+                <div class="flex items-center justify-center border-t border-gray-200 bg-white px-4 py-3 sm:px-6 rounded-lg">
+                    <div class="inline-flex rounded-md shadow-sm">
+                        <?php if ($data['pagination']['currentPage'] > 1): ?>
+                            <a href="tags?page=<?php echo ($data['pagination']['currentPage'] - 1); ?>"
+                               class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50">
+                                Previous
+                            </a>
+                        <?php endif; ?>
+
+                        <?php
+                        $start = max(1, $data['pagination']['currentPage'] - 2);
+                        $end = min($data['pagination']['lastPage'], $start + 4);
+                        
+                        for ($i = $start; $i <= $end; $i++): ?>
+                            <a href="tags?page=<?php echo $i; ?>"
+                               class="px-4 py-2 text-sm font-medium <?php echo $i === $data['pagination']['currentPage'] 
+                                    ? 'text-white bg-teal-600 border border-teal-600' 
+                                    : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'; ?>">
+                                <?php echo $i; ?>
+                            </a>
+                        <?php endfor; ?>
+
+                        <?php if ($data['pagination']['currentPage'] < $data['pagination']['lastPage']): ?>
+                            <a href="tags?page=<?php echo ($data['pagination']['currentPage'] + 1); ?>"
+                               class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50">
+                                Next
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php else: ?>
+        <div class="bg-white p-8 rounded-lg shadow-lg text-center">
+            <p class="text-xl text-gray-600">No tags available at this time.</p>
+        </div>
+    <?php endif; ?>
   </main>
 
   <?php include '../views/components/footer.php'; ?>

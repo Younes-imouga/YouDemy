@@ -21,7 +21,7 @@
         </div>
       <?php endif; ?>
 
-      <form action="/teacher/add-course" method="POST" class="space-y-6">
+      <form action="/teacher/add-course" method="POST" class="space-y-6" enctype="multipart/form-data">
         <div>
           <label for="title" class="block text-gray-700 font-semibold mb-2">Course Title</label>
           <input type="text" id="title" name="title" required
@@ -31,15 +31,12 @@
 
         <div>
           <label for="description" class="block text-gray-700 font-semibold mb-2">Course Description</label>
-          <textarea id="description" name="description" required rows="4"
-                    class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500"
-                    placeholder="Enter course description"></textarea>
+          <textarea id="description" name="description" required rows="4" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500" placeholder="Enter course description"></textarea>
         </div>
 
         <div>
           <label for="category" class="block text-gray-700 font-semibold mb-2">Category</label>
-          <select id="category" name="category_id" required
-                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+          <select id="category" name="category_id" required class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
             <option value="">Select a category</option>
             <?php foreach ($data['categories'] as $category): ?>
               <option value="<?php echo $category['id']; ?>">
@@ -51,12 +48,24 @@
 
         <div>
           <label for="content_type" class="block text-gray-700 font-semibold mb-2">Content Type</label>
-          <select id="content_type" name="content_type" required
-                  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+          <select id="content_type" name="content_type" required class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
             <option value="">Select content type</option>
             <option value="video">Video</option>
             <option value="document">Document</option>
           </select>
+        </div>
+
+        <div id="contentUpload" class="space-y-4">
+            <div id="videoUpload" class="hidden">
+                <label for="video_url" class="block text-gray-700 font-semibold mb-2">Video URL (YouTube/Vimeo)</label>
+                <input type="url" id="video_url" name="video_url"  class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500" placeholder="Enter video URL">
+            </div>
+
+            <div id="documentUpload" class="hidden">
+                <label for="pdf_file" class="block text-gray-700 font-semibold mb-2">PDF Document</label>
+                <input type="file" id="pdf_file" name="pdf_file" accept=".pdf" class="w-full p-3 border border-gray-300 rounded focus:outline-none focus:border-teal-500">
+                <p class="text-sm text-gray-500 mt-1">Maximum file size: 10MB</p>
+            </div>
         </div>
 
         <div>
@@ -82,6 +91,28 @@
         placeholder: true,
         placeholderValue: "Select multiple options...",
       });
+    });
+
+    document.getElementById('content_type').addEventListener('change', function() {
+        const videoUpload = document.getElementById('videoUpload');
+        const documentUpload = document.getElementById('documentUpload');
+        
+        if (this.value === 'video') {
+            videoUpload.classList.remove('hidden');
+            documentUpload.classList.add('hidden');
+            document.getElementById('video_url').required = true;
+            document.getElementById('pdf_file').required = false;
+        } else if (this.value === 'document') {
+            documentUpload.classList.remove('hidden');
+            videoUpload.classList.add('hidden');
+            document.getElementById('pdf_file').required = true;
+            document.getElementById('video_url').required = false;
+        } else {
+            videoUpload.classList.add('hidden');
+            documentUpload.classList.add('hidden');
+            document.getElementById('video_url').required = false;
+            document.getElementById('pdf_file').required = false;
+        }
     });
   </script>
   <?php include '../views/components/footer.php'; ?>

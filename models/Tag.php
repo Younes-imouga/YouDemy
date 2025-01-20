@@ -7,7 +7,7 @@ class Tag extends Db{
         parent::__construct();
     }
 
-    public function getAllTags() {
+    public function getAllTagsSelect() {
         try {
             $sql = "SELECT * FROM tags ORDER BY name";
             $stmt = $this->conn->prepare($sql);
@@ -16,6 +16,29 @@ class Tag extends Db{
         } catch (PDOException $e) {
             return [];
         }
+    }
+
+    public function getAllTags($page = 1, $perPage = 5) {
+        $offset = ($page - 1) * $perPage;
+        
+        $countSql = "SELECT COUNT(*) FROM tags";
+        $countStmt = $this->conn->prepare($countSql);
+        $countStmt->execute();
+        $totalCount = (int)$countStmt->fetchColumn();
+        
+        $sql = "SELECT * FROM tags ORDER BY name ASC LIMIT :offset, :per_page";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':per_page', $perPage, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return [
+            'tags' => $stmt->fetchAll(PDO::FETCH_ASSOC),
+            'pagination' => [
+                'currentPage' => (int)$page,
+                'lastPage' => (int)ceil($totalCount / $perPage)
+            ]
+        ];
     }
 
     public function createTag($name) {

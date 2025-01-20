@@ -10,10 +10,10 @@
 <body class="flex flex-col min-h-screen bg-gray-50">
     <main class="flex-grow container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
-            <!-- Course Header -->
+
             <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
                 <div class="relative">
-                    <img src="https://via.placeholder.com/1200x400" alt="Course Cover" class="w-full h-72 object-cover">
+                    <div class="w-full h-72 "></div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                     <div class="absolute bottom-6 left-8 right-8">
                         <span class="px-4 py-2 bg-teal-500 text-white text-sm font-semibold rounded-full mb-4 inline-block">
@@ -81,7 +81,6 @@
                 </div>
             </div>
 
-            <!-- Enroll Button -->
             <div class="text-center">
                 <?php if (isset($_GET['error'])): ?>
                     <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-6 py-3 rounded-xl">
@@ -89,6 +88,7 @@
                     </div>
                 <?php endif; ?>
 
+                <?php if (!$seeContent): ?>
                 <form action="/enroll-course" method="POST" class="inline-block">
                     <input type="hidden" name="course_id" value="<?php echo $data['course']['id']; ?>">
                     <button type="submit" 
@@ -96,7 +96,13 @@
                         Enroll in Course
                     </button>
                 </form>
+                <?php else: ?>
+                    <div class="text-center mt-4">
+                        <a href="/student/courseContent?course_id=<?php echo $data['course']['id']; ?>" class="bg-teal-600 text-white px-12 py-4 rounded-xl font-semibold hover:bg-teal-700 transition-all transform hover:scale-105 shadow-lg hover:shadow-xl">View Course Content</a>
+                    </div>
+                <?php endif; ?>
             </div>
+
         </div>
     </main>
     <?php require_once '../views/components/footer.php'; ?>

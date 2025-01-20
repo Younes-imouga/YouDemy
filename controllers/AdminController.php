@@ -1,5 +1,6 @@
 <?php
 require_once '../models/User.php';
+require_once '../models/Admin.php';
 require_once '../models/course.php';
 require_once '../models/category.php';
 require_once '../models/Tag.php';
@@ -11,13 +12,11 @@ class AdminController extends BaseController {
     }
     
     public function showDashboard() {
-        // $user = new User();
-        // // $pendingTeachers = $user->getPendingTeachers();
         $this->renderAdmin('dashboard');
     }
 
     public function showTeacherApprovals() {
-        $user = new User();
+        $user = new Admin();
         $pendingTeachers = $user->getPendingTeachers();
         $this->renderAdmin('teacherApprovals', ['pendingTeachers' => $pendingTeachers]);
     }
@@ -25,7 +24,7 @@ class AdminController extends BaseController {
     public function approveTeacher() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['teacher_id'])) {
             $teacherId = $_POST['teacher_id'];
-            $user = new User();
+            $user = new Admin();
             if ($user->approveTeacher($teacherId)) {
                 header('Location: /admin/teacher-approvals?success=Teacher approved');
             } else {
@@ -38,7 +37,7 @@ class AdminController extends BaseController {
     public function rejectTeacher() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['teacher_id'])) {
             $teacherId = $_POST['teacher_id'];
-            $user = new User();
+            $user = new Admin();
             if ($user->deleteTeacher($teacherId)) {
                 header('Location: /admin/teacher-approvals?success=Teacher rejected');
             } else {
@@ -49,7 +48,7 @@ class AdminController extends BaseController {
     }
 
     public function showUsers() {
-        $user = new User();
+        $user = new Admin();
         $users = $user->getAllUsers();
         $this->renderAdmin('users', ['users' => $users]);
     }
@@ -61,9 +60,14 @@ class AdminController extends BaseController {
     }
 
     public function showCategories() {
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $category = new Category();
-        $categories = $category->getAllCategories();
-        $this->renderAdmin('category', ['categories' => $categories]);
+        $result = $category->getAllCategories($page);
+        
+        $this->renderAdmin('category', [
+            'categories' => $result['categories'],
+            'pagination' => $result['pagination']
+        ]);
     }
 
     public function addCategory() {
@@ -137,9 +141,14 @@ class AdminController extends BaseController {
     }
 
     public function showTags() {
+        $page = isset($_GET['page']) ? max(1, intval($_GET['page'])) : 1;
         $tag = new Tag();
-        $tags = $tag->getAllTags();
-        $this->renderAdmin('tags', ['tags' => $tags]);
+        $result = $tag->getAllTags($page);
+        
+        $this->renderAdmin('tags', [
+            'tags' => $result['tags'],
+            'pagination' => $result['pagination']
+        ]);
     }
 
     public function addTag() {
@@ -194,5 +203,36 @@ class AdminController extends BaseController {
             }
             exit;
         }
+    }
+
+    public function changeUserStatus() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['user_id'], $_POST['action'])) {
+            $userId = $_POST['user_id'];
+            $action = $_POST['action'];
+            $user = new Admin();
+
+            switch ($action) {
+                case 'activate':
+                    $user->activateUser($userId);
+                    header('Location: /admin/manage-users');
+                    break;
+                case 'deactivate':
+                    $user->deactivateUser($userId);
+                    header('Location: /admin/manage-users');
+                    break;
+                case 'suspend':
+                    $user->suspendUser($userId);
+                    header('Location: /admin/manage-users');
+                    break;
+                default:
+                    header('Location: /admin/manage-users?error=Invalid action');
+                    break;
+            }
+            exit;
+        }
+    }
+
+    public function showStatistics() {
+        $this->renderAdmin('Statistics');
     }
 }

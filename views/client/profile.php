@@ -10,12 +10,10 @@
 </head>
 <body class="flex flex-col min-h-screen bg-gray-50 text-gray-800 font-sans">
 
-  <!-- Profile Content -->
   <section class="flex-grow container mx-auto mt-8">
     <div class="w-1/2 mx-auto bg-white p-8 rounded-lg shadow-lg">
       <h1 class="text-3xl font-extrabold text-gray-900 mb-6">Your Profile</h1>
       
-      <!-- Profile Info -->
       <div class="space-y-4">
         <div>
           <p class="font-semibold text-lg">Name:</p>
@@ -31,14 +29,12 @@
         </div>
       </div>
       
-      <!-- Edit Profile Button -->
       <a href="/profile/edit" class="mt-6 inline-block bg-teal-600 text-white px-6 py-2 rounded shadow hover:bg-teal-700">
         Edit Profile
       </a>
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="bg-gray-800 text-white mt-12">
     <div class="container mx-auto text-center p-4">
       <p class="text-sm">© 2025 Youdemy - All Rights Reserved</p>

@@ -62,7 +62,6 @@ class BaseController
         }
     }
     protected function allowVisitor() {
-        // No restrictions - visitors allowed
         return true;
     }
 }
