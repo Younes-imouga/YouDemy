@@ -56,6 +56,9 @@ if (!isset($_SESSION['Logged_in'])) {
         
         Route::get("/admin/manage-courses", [AdminController::class, 'showCourses']);
 
+        Route::post('/admin/delete-course', [AdminController::class, 'deleteCourse']);
+
+
         Route::get("/admin/categories", [AdminController::class, 'showCategories']);
         Route::post("/admin/add-category", [AdminController::class, 'addCategory']);
         Route::post("/admin/edit-category", [AdminController::class, 'editCategory']);

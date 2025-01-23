@@ -35,7 +35,6 @@
               <th class="px-6 py-3 border border-gray-300 text-left">Title</th>
               <th class="px-6 py-3 border border-gray-300 text-left">Teacher</th>
               <th class="px-6 py-3 border border-gray-300 text-left">Category</th>
-              <th class="px-6 py-3 border border-gray-300 text-left">Tags</th>
               <th class="px-6 py-3 border border-gray-300 text-left">Actions</th>
             </tr>
           </thead>
@@ -45,28 +44,6 @@
                 <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($course['title']); ?></td>
                 <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($course['teacher_name']); ?></td>
                 <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($course['category_name']); ?></td>
-                <td class="px-6 py-4 border border-gray-300">
-                  <?php if (!empty($course['tags'])): ?>
-                    <div class="flex flex-wrap gap-2">
-                      <?php 
-                      $displayTags = array_slice($course['tags'], 0, 3);
-                      $remainingCount = count($course['tags']) - 3;
-                      
-                      foreach ($displayTags as $tag): ?>
-                        <span class="px-2 py-1 bg-gray-200 text-black text-xs rounded-full">
-                          <?php echo htmlspecialchars($tag['name']); ?>
-                        </span>
-                      <?php endforeach; 
-                      
-                      if ($remainingCount > 0): ?>
-                        <span class="px-2 py-1 bg-teal-100 text-black text-xs rounded-full flex items-center gap-1 cursor-help"
-                              title="<?php echo htmlspecialchars(implode(', ', array_map(function($tag) { return $tag['name']; }, array_slice($course['tags'], 3)))); ?>">
-                          +<?php echo $remainingCount; ?>
-                        </span>
-                      <?php endif; ?>
-                    </div>
-                  <?php endif; ?>
-                </td>
                 <td class="px-6 py-4 border border-gray-300">
                   <a href="/admin/edit-course/<?php echo $course['id']; ?>" class="text-teal-600 hover:text-teal-900 mr-3">Edit</a>
                   <a href="/course/<?php echo $course['id']; ?>" class="text-blue-600 hover:text-blue-900 mr-3">Stats</a>

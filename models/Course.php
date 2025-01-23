@@ -115,40 +115,32 @@ class Course extends Db{
     public function createCourse($data) {
         try {
             $this->conn->beginTransaction();
-            
-            $sql = "INSERT INTO courses (title, description, category_id, content_type, content_url,content_path,teacher_id) VALUES ( :title,  :description,  :category_id,  :content_type,  :content_url, :content_path, :teacher_id)";
-            
+    
+            $content = null;
+    
+            if ($data['content_type'] === 'video') {
+                $content = new VideoContent($data['content_url']);
+            } elseif ($data['content_type'] === 'document') {
+                $content = new DocumentContent($data['content_path']);
+            }
+    
+            $sql = "INSERT INTO courses (title, description, category_id, content_type, content_url, content_path, teacher_id) VALUES (:title, :description, :category_id, :content_type, :content_url, :content_path, :teacher_id)";
+    
             $stmt = $this->conn->prepare($sql);
             $stmt->execute([
                 'title' => $data['title'],
                 'description' => $data['description'],
                 'category_id' => $data['category_id'],
                 'content_type' => $data['content_type'],
-                'content_url' => $data['content_type'] === 'video' ? $data['content_url'] : null,
-                'content_path' => $data['content_type'] === 'document' ? $data['content_path'] : null,
+                'content_url' => $content ? $content->getContent() : null,
+                'content_path' => $content ? $content->getContent() : null,
                 'teacher_id' => $data['teacher_id']
             ]);
-
-            $courseId = $this->conn->lastInsertId();
-
-            if (!empty($data['tags'])) {
-                $tagSql = "INSERT INTO course_tags (course_id, tag_id) VALUES (:course_id, :tag_id)";
-                $tagStmt = $this->conn->prepare($tagSql);
-                
-                foreach ($data['tags'] as $tagId) {
-                    $tagStmt->execute([
-                        'course_id' => $courseId,
-                        'tag_id' => $tagId
-                    ]);
-                }
-            }
-            
+    
             $this->conn->commit();
             return true;
-            
         } catch (PDOException $e) {
             $this->conn->rollBack();
-            error_log("Error creating course: " . $e->getMessage());
             return false;
         }
     }

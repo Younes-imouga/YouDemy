@@ -98,11 +98,10 @@ class TeacherController extends BaseController {
                 $categoryId = $_POST['category_id'] ?? '';
                 $contentType = $_POST['content_type'] ?? '';
                 $tags = isset($_POST['tags']) ? (array)$_POST['tags'] : [];
-                
-                
+        
                 $contentUrl = null;
                 $contentPath = null;
-                
+        
                 if ($contentType === 'video') {
                     $contentUrl = $_POST['video_url'] ?? '';
                     if (empty($contentUrl)) {
@@ -114,48 +113,47 @@ class TeacherController extends BaseController {
                         header('Location: /teacher/add-course?error=PDF file is required');
                         exit;
                     }
-                    
+        
                     $file = $_FILES['pdf_file'];
-                    if ($file['size'] > 10 * 1024 * 1024) { 
+                    if ($file['size'] > 10 * 1024 * 1024) {
                         header('Location: /teacher/add-course?error=File size must be less than 10MB');
                         exit;
                     }
-                    
+        
                     if ($file['type'] !== 'application/pdf') {
                         header('Location: /teacher/add-course?error=Only PDF files are allowed');
                         exit;
                     }
-                    
+        
                     $uploadDir = 'uploads/courses/';
                     if (!file_exists($uploadDir)) {
                         mkdir($uploadDir, 0777, true);
                     }
-                    
+        
                     $fileName = uniqid() . '_' . basename($file['name']);
                     $contentPath = $uploadDir . $fileName;
-                    
+        
                     if (!move_uploaded_file($file['tmp_name'], $contentPath)) {
                         header('Location: /teacher/add-course?error=Failed to upload file');
                         exit;
                     }
                 }
-                
+        
                 $course = new Course();
                 $result = $course->createCourse([
                     'title' => $title,
                     'description' => $description,
                     'category_id' => $categoryId,
                     'content_type' => $contentType,
-                    'content_url' => $contentUrl,
-                    'content_path' => $contentPath,
+                    'content_url' => $contentType === 'video' ? $contentUrl : null,
+                    'content_path' => $contentType === 'document' ? $contentPath : null,
                     'teacher_id' => $_SESSION['user_id'],
                     'tags' => $tags
                 ]);
-                
+        
                 if ($result) {
                     header('Location: /my-courses?success=Course created successfully');
                 } else {
-
                     if ($contentPath && file_exists($contentPath)) {
                         unlink($contentPath);
                     }

@@ -56,7 +56,7 @@ class AdminController extends BaseController {
     public function showCourses() {
         $course = new Course();
         $courses = $course->getAllCourses();
-        $this->renderAdmin('courses', ['courses' => $courses]);
+        $this->renderAdmin('courses', $courses);
     }
 
     public function showCategories() {
@@ -230,6 +230,22 @@ class AdminController extends BaseController {
             }
             exit;
         }
+    }
+
+    public function deleteCourse() {
+        $this->ensureAdmin(); 
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $courseId = $_POST['course_id'] ?? null;
+
+            if ($courseId) {
+                $courseModel = new Course();
+                $courseModel->deleteCourse($courseId); 
+                header('Location: /admin/manage-courses');
+                exit;
+            }
+        }
+        header('Location: /admin/manage-courses');
+        exit;
     }
 
     public function showStatistics() {
