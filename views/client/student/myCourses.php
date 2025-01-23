@@ -27,6 +27,7 @@
                 </div>
             <?php endforeach; ?>
         <?php else: ?>
+
             <div class="bg-white p-4 rounded-lg shadow">
                 <p class="text-gray-600">You are not enrolled in any courses yet.</p>
             </div>

@@ -12,7 +12,6 @@
   <main class="flex-grow container mx-auto py-8">
     <div class="flex justify-between items-center mb-6">
       <h1 class="text-3xl font-bold text-gray-900">Course Management</h1>
-      <a href="/admin/add-course" class="bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Add New Course</a>
     </div>
 
     <?php if (isset($_GET['success'])): ?>
@@ -45,7 +44,6 @@
                 <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($course['teacher_name']); ?></td>
                 <td class="px-6 py-4 border border-gray-300"><?php echo htmlspecialchars($course['category_name']); ?></td>
                 <td class="px-6 py-4 border border-gray-300">
-                  <a href="/admin/edit-course/<?php echo $course['id']; ?>" class="text-teal-600 hover:text-teal-900 mr-3">Edit</a>
                   <a href="/course/<?php echo $course['id']; ?>" class="text-blue-600 hover:text-blue-900 mr-3">Stats</a>
                   <form action="/admin/delete-course" method="POST" class="inline">
                     <input type="hidden" name="course_id" value="<?php echo $course['id']; ?>">

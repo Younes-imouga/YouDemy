@@ -45,6 +45,7 @@ class StudentController extends BaseController {
  
         $courseModel = new Course();
         $result = $courseModel->getCoursesByStudent($studentId, $currentPage, $perPage);
+
  
         $this->renderStudent('myCourses', [
             'courses' => $result['courses'],

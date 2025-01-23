@@ -1,5 +1,6 @@
 <?php
 require_once '../config/db.php';
+require_once 'content.php';
 
 class Course extends Db{
 
@@ -136,6 +137,10 @@ class Course extends Db{
                 'content_path' => $content ? $content->getContent() : null,
                 'teacher_id' => $data['teacher_id']
             ]);
+
+            $courseId = $this->conn->lastInsertId();
+
+            $this->addCourseTags($courseId, $data['tags']);
     
             $this->conn->commit();
             return true;

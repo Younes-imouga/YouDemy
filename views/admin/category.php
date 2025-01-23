@@ -51,10 +51,6 @@
                                 <td class="px-6 py-4 border border-gray-300 text-sm"><?php echo htmlspecialchars($category['name']); ?></td>
                                 <td class="px-6 py-4 border border-gray-300 text-sm"><?php echo htmlspecialchars($category['description']); ?></td>
                                 <td class="px-6 py-4 border border-gray-300 text-sm space-x-4">
-                                    <form action="/admin/edit-category" method="POST" class="inline">
-                                        <input type="hidden" name="id" value="<?php echo $category['id']; ?>">
-                                        <button class="text-teal-600 hover:underline">Edit</button>
-                                    </form>
                                     <form action="/admin/delete-category" method="POST" class="inline">
                                         <input type="hidden" name="id" value="<?php echo $category['id']; ?>">
                                         <button type="submit" class="text-red-600 hover:underline" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
